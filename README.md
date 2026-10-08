@@ -1,12 +1,10 @@
-<img src="assets/banner.png" alt="Code that delivers." width="100%" />
-
 <div align="center">
 
 <a href="https://www.blitznow.in">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/blitz-logo-dark.svg" />
-    <source media="(prefers-color-scheme: light)" srcset="assets/blitz-logo-light.svg" />
-    <img src="assets/blitz-logo-light.svg" alt="Blitz" height="44" />
+    <source media="(prefers-color-scheme: dark)" srcset="blitz-logo-dark.svg" />
+    <source media="(prefers-color-scheme: light)" srcset="blitz-logo-light.svg" />
+    <img src="blitz-logo-light.svg" alt="Blitz" height="44" />
   </picture>
 </a>
 
