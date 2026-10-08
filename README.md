@@ -23,6 +23,8 @@
 
 ### About me
 
+<img src="coding.svg" alt="Developer coding with coffee" width="340" align="left" />
+
 ```python
 class Sanket:
     role       = "Operation Automation Engineer @ Blitz"
@@ -34,26 +36,7 @@ class Sanket:
     motto      = "Code that delivers."
 ```
 
-### What I build
-
-| | |
-|---|---|
-| **Full-stack tools** | A rider-retention telecaller platform: React + TypeScript frontend, Python REST APIs, CI/CD on CircleCI |
-| **Backend APIs** | Rider analytics endpoints in Java Spring Boot |
-| **Fraud prevention** | Serverless services on AWS Lambda that catch fake delivery attempts |
-| **Workflow automation** | Apache Airflow pipelines and event-driven services on Lambda, SQS and S3 |
-| **Communication** | IVR, call masking and WhatsApp journeys with Plivo, Fyno and Futwork |
-
-### Impact
-
-<table>
-  <tr>
-    <td align="center"><h2>~35%</h2>less manual ops effort</td>
-    <td align="center"><h2>~2.5K</h2>leads per calling cycle</td>
-    <td align="center"><h2>~73%</h2>call connectivity</td>
-    <td align="center"><h2>30%</h2>faster incident MTTR</td>
-  </tr>
-</table>
+<br clear="left" />
 
 ---
 
