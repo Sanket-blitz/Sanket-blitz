@@ -15,7 +15,7 @@
 <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=20&duration=2800&pause=900&color=8BC34A&center=true&vCenter=true&width=620&lines=Building+the+systems+behind+last-mile+delivery;Full-stack+tools+%E2%80%A2+Serverless+on+AWS;Airflow+pipelines+%E2%80%A2+Event-driven+services;Code+that+delivers." alt="Typing intro" /></a>
 
 <a href="https://www.linkedin.com/in/sanket-choudhary-2030a819b/"><img src="https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
-<img src="https://komarev.com/ghpvc/?username=Sanket-blitz&style=for-the-badge&color=8BC34A&label=PROFILE+VIEWS" alt="Profile views" />
+<a href="mailto:sanket.choudhary@blitznow.in"><img src="https://img.shields.io/badge/Email-sanket.choudhary@blitznow.in-C6F25A?style=for-the-badge&logo=gmail&logoColor=C6F25A&labelColor=0B0F0D" alt="Email" /></a>
 
 </div>
 
