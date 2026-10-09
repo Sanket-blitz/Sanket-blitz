@@ -23,17 +23,16 @@
 
 ### About me
 
-<img src="coding-v2.svg" alt="Developer coding with coffee" width="340" align="left" />
+<img src="coding-v3.svg" alt="Developer coding with coffee" width="430" align="left" />
 
 ```python
 class Sanket:
-    role       = "Operation Automation Engineer @ Blitz"
-    based_in   = "Bengaluru, India"
-    languages  = ["Python", "Java", "TypeScript", "SQL"]
-    cloud      = ["AWS Lambda", "SQS", "S3", "ECS", "Apache Airflow"]
-    integrates = ["Plivo", "Fyno", "Futwork"]
-    building   = "full-stack tools and automation for last-mile delivery"
-    motto      = "Code that delivers."
+    role  = "Operation Automation Engineer"
+    at    = "Blitz, Bengaluru"
+    code  = ["Python", "Java", "TS", "SQL"]
+    cloud = ["AWS", "Airflow", "Postgres"]
+    apis  = ["Plivo", "Fyno", "Futwork"]
+    motto = "Code that delivers."
 ```
 
 <br clear="left" />
