@@ -23,7 +23,7 @@
 
 ### About me
 
-<img src="coding.svg" alt="Developer coding with coffee" width="340" align="left" />
+<img src="coding-v2.svg" alt="Developer coding with coffee" width="340" align="left" />
 
 ```python
 class Sanket:
