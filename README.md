@@ -59,11 +59,4 @@ class Sanket:
 
 ### GitHub activity
 
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=Sanket-blitz&show_icons=true&hide_border=true&count_private=true&bg_color=0B0F0D&title_color=C6F25A&icon_color=C6F25A&text_color=ECEFE9" alt="GitHub stats" height="165" />
-  <img src="https://streak-stats.demolab.com?user=Sanket-blitz&hide_border=true&background=0B0F0D&ring=C6F25A&fire=C6F25A&currStreakLabel=C6F25A&sideLabels=ECEFE9&currStreakNum=ECEFE9&sideNums=ECEFE9&dates=9AA39C&stroke=26322C" alt="GitHub streak" height="165" />
-</p>
-
-<p align="center">
-  <img src="https://ghchart.rshah.org/7CB342/Sanket-blitz" alt="Contribution calendar" width="100%" />
-</p>
+<img src="contributions-graph.svg" alt="Contributions over the last 30 days" width="100%" />
