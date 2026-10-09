@@ -1,0 +1,127 @@
+name: Update contribution graph
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"   # every 3 hours
+  workflow_dispatch:          # run it by hand from the Actions tab
+  push:
+    paths:
+      - ".github/workflows/contrib-graph.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  graph:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Draw graph
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_USER: ${{ github.repository_owner }}
+        run: |
+          cat > /tmp/contrib_graph.py <<'PYEOF'
+          """Draw a line graph of the last 30 days of GitHub contributions as an SVG.
+
+          Reads the public contribution calendar through the GitHub GraphQL API
+          (private contributions are included when "Include private contributions
+          on my profile" is turned on in GitHub settings) and writes
+          contributions-graph.svg at the repository root.
+          """
+          import json
+          import os
+          import sys
+          import urllib.request
+          from datetime import datetime, timedelta, timezone
+
+          USER = os.environ.get("GH_USER", "Sanket-blitz")
+          TOKEN = os.environ.get("GITHUB_TOKEN", "")
+          DAYS = 30
+          OUT = os.environ.get("OUT", "contributions-graph.svg")
+
+          W, H = 860, 280
+          PAD_L, PAD_R, PAD_T, PAD_B = 56, 28, 64, 44
+          BG, GRID, MUTED, TEXT, ACCENT = "#0B0F0D", "#1C2420", "#7F8981", "#ECEFE9", "#C6F25A"
+
+
+          def fetch_days():
+              if os.environ.get("FAKE"):  # local preview without network
+                  import random
+                  random.seed(4)
+                  end = datetime.now(timezone.utc).date()
+                  return [((end - timedelta(days=DAYS - 1 - i)).isoformat(), random.choice([0, 1, 2, 3, 5, 8, 12]))
+                          for i in range(DAYS)]
+              end = datetime.now(timezone.utc)
+              start = end - timedelta(days=DAYS - 1)
+              query = """query($login:String!,$from:DateTime!,$to:DateTime!){
+                user(login:$login){contributionsCollection(from:$from,to:$to){
+                  contributionCalendar{weeks{contributionDays{date contributionCount}}}}}}"""
+              body = json.dumps({"query": query, "variables": {
+                  "login": USER, "from": start.strftime("%Y-%m-%dT00:00:00Z"), "to": end.strftime("%Y-%m-%dT23:59:59Z")}})
+              req = urllib.request.Request("https://api.github.com/graphql", data=body.encode(),
+                                           headers={"Authorization": f"bearer {TOKEN}", "Content-Type": "application/json"})
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  data = json.load(r)
+              if "errors" in data:
+                  sys.exit(f"GraphQL error: {data['errors']}")
+              weeks = data["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]
+              days = [(d["date"], d["contributionCount"]) for w in weeks for d in w["contributionDays"]]
+              return days[-DAYS:]
+
+
+          def build_svg(days):
+              counts = [c for _, c in days]
+              total, peak = sum(counts), max(counts) or 1
+              top = max(4, peak + (-peak % 4))  # round the y-axis up to a multiple of 4
+              cw, ch = W - PAD_L - PAD_R, H - PAD_T - PAD_B
+              xs = [PAD_L + i * cw / (len(days) - 1) for i in range(len(days))]
+              ys = [PAD_T + ch - c / top * ch for c in counts]
+
+              line = " ".join(f"{'M' if i == 0 else 'L'}{x:.1f},{y:.1f}" for i, (x, y) in enumerate(zip(xs, ys)))
+              area = f"{line} L{xs[-1]:.1f},{PAD_T + ch} L{xs[0]:.1f},{PAD_T + ch} Z"
+
+              grid = []
+              for k in range(5):
+                  v = top * k / 4
+                  y = PAD_T + ch - ch * k / 4
+                  grid.append(f'<line x1="{PAD_L}" y1="{y:.1f}" x2="{W - PAD_R}" y2="{y:.1f}" stroke="{GRID}"/>'
+                              f'<text x="{PAD_L - 10}" y="{y + 4:.1f}" text-anchor="end" fill="{MUTED}" font-size="11">{int(v)}</text>')
+              labels = []
+              for i in range(0, len(days), 5):
+                  d = datetime.fromisoformat(days[i][0])
+                  labels.append(f'<text x="{xs[i]:.1f}" y="{H - 16}" text-anchor="middle" fill="{MUTED}" font-size="11">{d.strftime("%d %b")}</text>')
+              dots = "".join(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="3" fill="{BG}" stroke="{ACCENT}" stroke-width="2"><title>{d}: {c}</title></circle>'
+                             for (d, c), x, y in zip(days, xs, ys))
+              updated = datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC")
+
+              return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" role="img" aria-label="{total} contributions in the last {DAYS} days">
+          <style>.ln{{stroke-dasharray:8000;stroke-dashoffset:8000;animation:draw 2.4s ease-out forwards}}@keyframes draw{{to{{stroke-dashoffset:0}}}}
+          .ar{{opacity:0;animation:fade 1.2s ease-out 1s forwards}}@keyframes fade{{to{{opacity:1}}}}</style>
+          <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{ACCENT}" stop-opacity=".28"/><stop offset="1" stop-color="{ACCENT}" stop-opacity="0"/></linearGradient></defs>
+          <rect width="{W}" height="{H}" rx="14" fill="{BG}"/>
+          <text x="{PAD_L}" y="34" fill="{TEXT}" font-size="15" font-weight="600">Contributions · last {DAYS} days</text>
+          <text x="{W - PAD_R}" y="34" text-anchor="end" fill="{ACCENT}" font-size="15" font-weight="600">{total} total</text>
+          <text x="{W - PAD_R}" y="50" text-anchor="end" fill="{MUTED}" font-size="10">updated {updated}</text>
+          {"".join(grid)}
+          <path class="ar" d="{area}" fill="url(#g)"/>
+          <path class="ln" d="{line}" fill="none" stroke="{ACCENT}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+          {dots}
+          {"".join(labels)}
+          </svg>
+          '''
+
+
+          if __name__ == "__main__":
+              with open(OUT, "w") as f:
+                  f.write(build_svg(fetch_days()))
+              print(f"wrote {OUT}")
+          PYEOF
+          python3 /tmp/contrib_graph.py
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add contributions-graph.svg
+          git diff --cached --quiet || git commit -m "Update contribution graph"
+          git push
